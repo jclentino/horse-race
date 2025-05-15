@@ -33,6 +33,10 @@ Presiona el botón **Iniciar** y observa cómo los caballos compiten en paralelo
 
 También puedes presionar **Reiniciar** para volver a comenzar la carrera.
 
+## 📹 Video de demostración
+
+Dentro de la carpeta `src/assets` encontrarás un video que muestra cómo se usa la aplicación. Puedes verlo para tener una idea rápida del funcionamiento del juego.
+
 ---
 
 ¡Disfruta del proyecto y siéntete libre de modificarlo para tus propios juegos! 🎉
