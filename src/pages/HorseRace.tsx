@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Progress, Button, Typography } from 'antd'
+import Confetti from "react-confetti"
+
 
 const { Title } = Typography
 
@@ -89,6 +91,7 @@ const HorseRace = () => {
         overflow: 'hidden'
       }}
     >
+      {winner && <Confetti width={window.innerWidth} height={window.innerHeight} />}
       <Title level={2} style={{ textAlign: 'center', marginBottom: 30 }}>🏇 Carrera de Caballos</Title>
 
       <div 
