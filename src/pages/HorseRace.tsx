@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { Progress, Button, Typography } from 'antd'
+import { Progress, Button, Typography, Select } from 'antd'
 import Confetti from "react-confetti"
 
-
 const { Title } = Typography
+const { Option } = Select
 
 type Horse = {
   name: string
@@ -17,11 +17,14 @@ const defaultHorse: Horse[] = [
   { name: 'Caballo 4', progress: 0 }
 ]
 
-
 const HorseRace = () => {
   const [horses, setHorses] = useState<Horse[]>(defaultHorse)
   const [isRunning, setIsRunning] = useState<boolean>(false)
   const [winner, setWinner] = useState<string | null>(null)
+  const [selectedHorseOption, setSelectedHorseOption] = useState<string | null>(null)
+  const [selectedHorse, setSelectedHorse] = useState<string | null>(null)
+  
+
 
   const intervals = useRef<any[]>([])
 
@@ -56,9 +59,11 @@ const HorseRace = () => {
   }
 
   const startRace = () => {
+    if (!selectedHorseOption) return
     setHorses(defaultHorse)
     setWinner(null)
     setIsRunning(true)
+    setSelectedHorse(selectedHorseOption)
   }
 
   const resetRace = () => {
@@ -66,6 +71,8 @@ const HorseRace = () => {
     intervals.current = []
     setIsRunning(false)
     setWinner(null)
+    setSelectedHorse(null)
+    setSelectedHorseOption(null)
     setHorses(defaultHorse)
   }
 
@@ -80,7 +87,7 @@ const HorseRace = () => {
   }, [isRunning])
 
   return (
-    <div 
+    <div
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -91,10 +98,13 @@ const HorseRace = () => {
         overflow: 'hidden'
       }}
     >
-      {winner && <Confetti width={window.innerWidth} height={window.innerHeight} />}
+      {winner && selectedHorse && winner === selectedHorse && (
+        <Confetti width={window.innerWidth} height={window.innerHeight} />
+      )}
+
       <Title level={2} style={{ textAlign: 'center', marginBottom: 30 }}>🏇 Carrera de Caballos</Title>
 
-      <div 
+      <div
         style={{
           display: 'flex',
           flexWrap: 'wrap',
@@ -104,7 +114,7 @@ const HorseRace = () => {
         }}
       >
         {/* Lista de Caballos */}
-        <div 
+        <div
           style={{
             flex: '1 1 400px',
             maxWidth: 600,
@@ -117,12 +127,17 @@ const HorseRace = () => {
             <div key={idx}>
               <Title level={5} style={{ marginBottom: 8 }}>{horse.name}</Title>
               <Progress percent={horse.progress} status={winner === horse.name ? 'success' : 'active'} />
+              {winner === horse.name && (
+                <div style={{ marginTop: 5, fontWeight: 'bold', fontSize: 16 }}>
+                  {selectedHorse === horse.name ? '🎉 ¡Ganaste tu apuesta!' : '😢 Perdiste la apuesta'}
+                </div>
+              )}
             </div>
           ))}
         </div>
 
         {/* Controles */}
-        <div 
+        <div
           style={{
             width: 300,
             minWidth: 260,
@@ -138,14 +153,37 @@ const HorseRace = () => {
           }}
         >
           <Title level={4}>Controles</Title>
-          <Button type="primary" block onClick={startRace} disabled={isRunning}>
+
+          <Select
+            style={{ width: '100%' }}
+            placeholder="Elige tu caballo ganador"
+            onChange={(value) => setSelectedHorseOption(value)}
+            value={selectedHorseOption}
+            disabled={isRunning}
+          >
+            {defaultHorse.map((horse, idx) => (
+              <Option key={idx} value={horse.name}>{horse.name}</Option>
+            ))}
+          </Select>
+
+          <Button
+            type="primary"
+            block
+            onClick={startRace}
+            disabled={isRunning || !selectedHorseOption}
+          >
             Iniciar
           </Button>
+
           <Button block onClick={resetRace}>
             Reiniciar
           </Button>
+
           {winner && (
-            <div style={{ marginTop: 20, fontSize: 18, fontWeight: 'bold', color: '#52c41a', textAlign: 'center' }}>
+            <div style={{ marginTop: 20, fontSize: 18, fontWeight: 'bold', color: selectedHorse === winner ? '#52c41a' : '#ff4d4f', textAlign: 'center' }}>
+              ✔️ Escogido:<br />{selectedHorse}
+              <br />
+              <br />
               🏁 Ganador:<br />{winner}
             </div>
           )}
